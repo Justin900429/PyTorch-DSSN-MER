@@ -87,7 +87,7 @@ $ python train.py \
     --model DSSN
 ```
 
-Especially, user can decide what mode to be used in training. **DSSN** need two modes for training. On the other hand, **SSSN** only need to choose one mode.
+Especially, user can decide what mode to be used in training. **DSSN** needs two modes for training. On the other hand, **SSSN** only needs to choose one mode.
 ```
 # For DSSN
 ... \
@@ -105,7 +105,6 @@ The weight was obtained from [YOUSIKI's](https://github.com/YOUSIKI/PyTorch-Alex
 ## Metrics
 
 ### Model weights
-
 
 | Model | Paramters |
 | ----- | --------- |
