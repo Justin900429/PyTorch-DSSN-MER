@@ -108,8 +108,8 @@ The weight was obtained from [YOUSIKI's](https://github.com/YOUSIKI/PyTorch-Alex
 
 | Model | Paramters |
 | ----- | --------- |
-| SSSN  | 0.49M     |
-| DSSN  | 0.82M     |
+| SSSN  | 0.63M     |
+| DSSN  | 0.972M    |
 
 ### Evaluation (LOSO cross validation)
 |  Categories  | Accuracy | F1-Score |          Method           |
