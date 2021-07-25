@@ -15,7 +15,8 @@ from read_file import read_csv
 
 
 def save_SAMM_preprocess_weight(data_info: pd.DataFrame, root: str,
-                                path: str, crop_size: Union[tuple, int]):
+                                path: str, crop_size: Union[tuple, int],
+                                new_size:int = 227):
     """Save the preprocess weight for the repeating usage
 
     Parameters
@@ -28,7 +29,7 @@ def save_SAMM_preprocess_weight(data_info: pd.DataFrame, root: str,
         Path to save the weight
     crop_size: Union[tuple, int]
         Center crop size for the image
-
+    
     """
     os.makedirs(path, exist_ok=True)
 
@@ -50,7 +51,7 @@ def save_SAMM_preprocess_weight(data_info: pd.DataFrame, root: str,
         apex_frame = center_crop(apex_frame, (500, 500))
 
         # Convert to optical flow and save
-        flow = TVL1_optical_flow(prev_frame=onset_frame,
+        flow = TVL1_optical_flow(prev_frame=onset_frame, 
                                  next_frame=apex_frame)
         # Save magnitude
         mag = TVL1_magnitude(flow)
@@ -59,15 +60,15 @@ def save_SAMM_preprocess_weight(data_info: pd.DataFrame, root: str,
         # Save strain
         strain = optical_strain(flow)
         np.savez(file=f"{path}/{data_info.loc[idx, 'Filename']}.npz",
-                 flow=cv2.resize(flow, (224, 224)),
-                 mag=cv2.resize(mag, (224, 224)),
-                 gray=cv2.resize(gray, (224, 224)),
-                 strain=cv2.resize(strain, (224, 224)))
+                 flow=np.transpose(cv2.resize(flow, (new_size, new_size)), (2, 0, 1)),
+                 mag=cv2.resize(mag, (new_size, new_size)),
+                 gray=cv2.resize(gray, (new_size, new_size)),
+                 strain=cv2.resize(strain, (new_size, new_size)))
         print(f"Finish processing {path}/{data_info.loc[idx, 'Filename']}.npz")
 
 
 def save_CASME_preprocess_weight(data_info: pd.DataFrame, root: str,
-                                 path: str):
+                                 path: str, new_size: int = 227):
     """Save the preprocess weight for the repeating usage
 
     Parameters
@@ -91,15 +92,15 @@ def save_CASME_preprocess_weight(data_info: pd.DataFrame, root: str,
         onset_frame = cv2.imread(onset_frame_name)
         if onset_frame is None:
             print(onset_frame_name)
-        onset_frame = cv2.resize(onset_frame, (224, 224))
+        onset_frame = cv2.resize(onset_frame, (new_size, new_size))
 
         apex_frame = cv2.imread(apex_frame_name)
         if apex_frame is None:
             print(apex_frame_name)
-        apex_frame = cv2.resize(apex_frame, (224, 224))
+        apex_frame = cv2.resize(apex_frame, (new_size, new_size))
 
         # Convert to optical flow and save
-        flow = TVL1_optical_flow(prev_frame=onset_frame,
+        flow = TVL1_optical_flow(prev_frame=onset_frame, 
                                  next_frame=apex_frame)
         # Save magnitude
         mag = TVL1_magnitude(flow)
@@ -108,7 +109,7 @@ def save_CASME_preprocess_weight(data_info: pd.DataFrame, root: str,
         # Save strain
         strain = optical_strain(flow)
         np.savez(file=f"{path}/{subject}_{data_info.loc[idx, 'Filename']}.npz",
-                 flow=flow,
+                 flow=np.transpose(flow, (2, 0, 1)),
                  mag=mag,
                  gray=gray,
                  strain=strain)
@@ -134,7 +135,7 @@ if __name__ == "__main__":
 
     # Save the weight
     data, _ = read_csv(args.csv_path)
-
+    
     if args.CASME:
         save_CASME_preprocess_weight(data_info=data,
                                      root=args.root,

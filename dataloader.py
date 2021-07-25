@@ -87,7 +87,7 @@ class MyDataset(Dataset):
     def __init__(self, data_info: pd.DataFrame, label_mapping: dict,
                  preprocess_path: str, mode: tuple,
                  catego: str):
-
+        
         # Check if mode is correct or not
         assert len(mode) <= 2, f"Image mode contain at most 2 categories, give {len(mode)}"
 
@@ -95,7 +95,7 @@ class MyDataset(Dataset):
         self.label_mapping = label_mapping
         self.preprocess_path = preprocess_path
         self.catego = catego
-
+        
         if len(mode) == 2:
             self.mode = mode
         else:
@@ -104,7 +104,7 @@ class MyDataset(Dataset):
         self.transforms = transforms.Compose([
             transforms.Lambda(lambda x: x / 255.0),
             transforms.Normalize(
-                mean=(0.485, 0.456, 0.406),
+                mean=(0.406, 0.456, 0.485),
                 std=(1.0, 1.0, 1.0)
             )
         ])
@@ -115,7 +115,7 @@ class MyDataset(Dataset):
     def __getitem__(self, idx: int):
         # Label for the image
         label = self.label_mapping[self.data_info.loc[idx, "Estimated Emotion"]]
-
+        
         # Load in the matrix that already been preprocessed
         if self.catego == "SAMM":
             npz_path = f"{self.preprocess_path}/{self.data_info.loc[idx, 'Filename']}.npz"
@@ -123,31 +123,31 @@ class MyDataset(Dataset):
             subject = self.data_info.loc[idx, "Subject"]
             npz_path = f"{self.preprocess_path}/{subject}_{self.data_info.loc[idx, 'Filename']}.npz"
         preprocess_image = np.load(npz_path)
-
+        
         # Load in the flow
         flow = torch.FloatTensor(preprocess_image["flow"])
 
         if isinstance(self.mode, (tuple, list)):
             # Create a space for the flow
             stream_one = torch.FloatTensor(preprocess_image[MyDataset.build_mode(self.mode[0])])
-            stream_one = stream_one.unsqueeze(2)
-            image_one = torch.cat([flow, stream_one], dim=-1).permute(2, 0, 1)
+            stream_one = stream_one.unsqueeze(0)
+            image_one = torch.cat([flow, stream_one], dim=0)
             image_one = self.transforms(image_one)
-
+            
             stream_two = torch.FloatTensor(preprocess_image[MyDataset.build_mode(self.mode[1])])
-            stream_two = stream_two.unsqueeze(2)
-            image_two = torch.cat([flow, stream_two], dim=-1).permute(2, 0, 1)
+            stream_two = stream_two.unsqueeze(0)
+            image_two = torch.cat([flow, stream_two], dim=0)
             image_two = self.transforms(image_two)
 
             return (image_one, image_two), label
         else:
             stream = torch.FloatTensor(preprocess_image[MyDataset.build_mode(self.mode)])
-            stream = stream.unsqueeze(2)
-            image = torch.cat([flow, stream], dim=-1).permute(2, 0, 1)
+            stream = stream.unsqueeze(0)
+            image = torch.cat([flow, stream], dim=0)
             image = self.transforms(image)
 
             return image, label
-
+        
     @staticmethod
     def build_mode(mode):
         if mode == "F":
@@ -172,4 +172,3 @@ def get_loader(csv_file, preprocess_path,
                             pin_memory=True)
 
     return dataset, dataloader
-

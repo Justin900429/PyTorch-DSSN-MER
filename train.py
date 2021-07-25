@@ -134,14 +134,13 @@ def LOSO_train(data: pd.DataFrame, sub_column: str, args,
                                     preprocess_path=args.pre,
                                     label_mapping=label_mapping,
                                     mode=image_mode,
-                                    batch_size=args.batch_size,
+                                    batch_size=len(test_csv),
                                     catego=args.catego)
 
         # Read in the model
         model = getattr(network, args.model)(num_classes=args.num_classes,
-                                             freeze_k=args.freeze_k,
-                                             mode=args.combination_mode,).to(device)
-
+                                             mode=args.combination_mode).to(device)
+        
         # Create criterion and optimizer
         criterion = nn.CrossEntropyLoss()
         optimizer = torch.optim.Adam(model.parameters(),
@@ -151,13 +150,12 @@ def LOSO_train(data: pd.DataFrame, sub_column: str, args,
         train(epochs=args.epochs,
               criterion=criterion,
               optimizer=optimizer,
-              model=model,
+              model=model, 
               train_loader=train_loader,
               device=device,
               weight_path=args.weight_save_path,
               model_last_name=f"model_last_{idx}.pt")
 
-        print(f"{idx + 1}")
         temp_test_accuracy, temp_f1_score = evaluate(test_loader=test_loader,
                                                      model=model,
                                                      device=device)
@@ -209,10 +207,6 @@ if __name__ == "__main__":
                         type=str,
                         default="DSSN",
                         help="Model to used for training")
-    parser.add_argument("--freeze_k",
-                        type=int,
-                        default=4,
-                        help="Layer to freeze in AlexNet")
     parser.add_argument("--epochs",
                         type=int,
                         default=15,
@@ -223,15 +217,12 @@ if __name__ == "__main__":
                         help="Learning rate for training the model")
     args = parser.parse_args()
 
-    # Check if freeze_k is smaller or equal to 5
-    assert args.freeze_k <= 5, "freeze_k should smaller or equal to 5"
-
     # Training device
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
     # Read in the data
     data, label_mapping = read_csv(args.path)
-
+    
     # Create folders for the saving weight
     os.makedirs(args.weight_save_path, exist_ok=True)
 
@@ -241,4 +232,3 @@ if __name__ == "__main__":
                label_mapping=label_mapping,
                args=args,
                device=device)
-

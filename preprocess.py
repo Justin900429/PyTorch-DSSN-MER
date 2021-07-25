@@ -42,14 +42,14 @@ def TVL1_optical_flow(prev_frame: np.array, next_frame: np.array):
     # Create TV-L1 optical flow
     optical_flow = cv2.optflow.DualTVL1OpticalFlow_create()
     flow = optical_flow.calc(prev_frame, next_frame, None)
-
+    
     # Do the normalization
     return normalized(flow)
 
 
 def TVL1_magnitude(flow: np.array):
     """Compute the magnitude of the frame"""
-    return np.sqrt(flow[..., 0]**2 + flow[..., 1]**2)
+    return np.sqrt(np.sum(flow ** 2, axis=-1))
 
 
 def optical_strain(flow: np.array) -> np.array:
@@ -84,9 +84,8 @@ def optical_strain(flow: np.array) -> np.array:
 def gray_frame(frame):
     """Transform the frame into Gray and normalized the result"""
     frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-
-    # Do the normalization
-    return normalized(frame, lambda_=16)
+    
+    return normalized(frame)
 
 
 def normalized(frame: np.array,
@@ -104,4 +103,3 @@ def normalized(frame: np.array,
     frame = lambda_ * (frame - f_min) * (g_max - g_min) / (f_max - f_min) + g_min
 
     return frame
-
