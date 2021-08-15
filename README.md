@@ -1,4 +1,4 @@
-# Pytorch DSSN-MER README
+# README
 
 ## Introduction
 This is the Pytorch Version for the reproduction of [Dual-Dtream Shallow Networks for Facial Micro-Expression Recognition](https://ieeexplore.ieee.org/document/8802965).
