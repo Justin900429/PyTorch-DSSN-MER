@@ -54,7 +54,7 @@ def TVL1_magnitude(flow: np.array):
 
 def optical_strain(flow: np.array) -> np.array:
     """Compute the optical strain for the given u, v
-    Refer to: https://github.com/mariaoliverparera/mod-opticalStrain/blob/master/get_contours.py
+    Refer to: https://github.com/IcedDoggie/Micro-Expression-with-Deep-Learning/blob/master/External-Tools/tvl1flow_3/output_strain.m
 
     Parameters
     ----------
@@ -70,13 +70,13 @@ def optical_strain(flow: np.array) -> np.array:
     v = flow[..., 1]
 
     # Compute the gradient
-    u_x, u_y = np.gradient(u)
-    v_x, v_y = np.gradient(v)
+    u_x = u - np.roll(u, 1, axis=1)
+    u_y = u - np.roll(u, 1, axis=0)
+    v_x = v - np.roll(v, 1, axis=1)
+    v_y = v - np.roll(v, 1, axis=0)
 
     e_xy = 0.5 * (u_y + v_x)
-
-    e_mag = u_x**2 + 2 * e_xy**2 + v_y**2
-    e_mag = np.sqrt(e_mag)
+    e_mag = np.sqrt(u_x**2 + 2 * (e_xy**2) + v_y**2)
 
     return e_mag
 
