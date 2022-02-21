@@ -24,14 +24,13 @@ $ pip install -r requirements.txt
 The preprocessed images can be reused to cut down the training time. The usage is shown below:
 ```
 usage: save_process_image.py [-h] --csv_path CSV_PATH --root ROOT --save_path
-                             SAVE_PATH [--CASME]
+                             SAVE_PATH --catego CATEGO
 
 optional arguments:
   -h, --help            show this help message and exit
   --csv_path CSV_PATH
   --root ROOT
-  --save_path SAVE_PATH
-  --CASME
+  --catego CATEGO
 ```
 
 For example:
@@ -39,8 +38,7 @@ For example:
 $ python save_process_weight \
     --csv_path <path_to_csv_file> \
     --root <Path to images> \
-    --save_path CASME_preprocess \
-    --CASME
+    --catego <category>
 ```
 
 ### Training
