@@ -103,6 +103,7 @@ class MyDataset(Dataset):
 
         self.transforms = transforms.Compose([
             transforms.Lambda(lambda x: x / 255.0),
+            transforms.Resize((227, 227)),
             transforms.Normalize(
                 mean=(0.406, 0.456, 0.485),
                 std=(1.0, 1.0, 1.0)
@@ -117,15 +118,21 @@ class MyDataset(Dataset):
         label = self.label_mapping[self.data_info.loc[idx, "Estimated Emotion"]]
         
         # Load in the matrix that already been preprocessed
-        if self.catego == "SAMM":
-            npz_path = f"{self.preprocess_path}/{self.data_info.loc[idx, 'Filename']}.npz"
-        else:
-            subject = self.data_info.loc[idx, "Subject"]
-            npz_path = f"{self.preprocess_path}/{subject}_{self.data_info.loc[idx, 'Filename']}.npz"
+        # Load in the matrix that had already been preprocessed
+        if self.catego == "CASME":
+            img_path = f"{self.img_root}/sub{subject}/{self.data_info.loc[idx, 'Filename']}"
+            npz_path = f"{img_path}/{subject}_{self.data_info.loc[idx, 'Filename']}.npz"
+        elif self.catego == "SAMM":
+            img_path = f"{self.img_root}/{subject}/{self.data_info.loc[idx, 'Filename']}"
+            npz_path = f"{img_path}/{self.data_info.loc[idx, 'Filename']}.npz"
+        elif self.catego == "SMIC":
+            img_path = f"{self.img_root}/{subject}/micro/{self.data_info.loc[idx, 'label']}/{self.data_info.loc[idx, 'Filename']}"
+            npz_path = f"{img_path}/{self.data_info.loc[idx, 'Filename']}.npz"
         preprocess_image = np.load(npz_path)
         
         # Load in the flow
         flow = torch.FloatTensor(preprocess_image["flow"])
+        flow = flow.permute(2, 0, 1)
 
         if isinstance(self.mode, (tuple, list)):
             # Create a space for the flow
