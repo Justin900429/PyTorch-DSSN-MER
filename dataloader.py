@@ -85,16 +85,15 @@ def LOSO_sequence_generate(data: pd.DataFrame, sub_column: str) -> tuple:
 
 class MyDataset(Dataset):
     def __init__(self, data_info: pd.DataFrame, label_mapping: dict,
-                 preprocess_path: str, mode: tuple,
-                 catego: str):
+                 img_root: str, mode: tuple, catego: str):
         
         # Check if mode is correct or not
         assert len(mode) <= 2, f"Image mode contain at most 2 categories, give {len(mode)}"
 
         self.data_info = data_info
         self.label_mapping = label_mapping
-        self.preprocess_path = preprocess_path
         self.catego = catego
+        self.img_root = img_root
         
         if len(mode) == 2:
             self.mode = mode
@@ -102,11 +101,11 @@ class MyDataset(Dataset):
             self.mode = mode[0]
 
         self.transforms = transforms.Compose([
-            transforms.Lambda(lambda x: x / 255.0),
+            transforms.Lambda(lambd=lambda x: x / 255),
             transforms.Resize((227, 227)),
             transforms.Normalize(
-                mean=(0.406, 0.456, 0.485),
-                std=(1.0, 1.0, 1.0)
+                mean=[0.485, 0.456, 0.406],
+                std=[0.229, 0.224, 0.225]
             )
         ])
 
@@ -116,6 +115,7 @@ class MyDataset(Dataset):
     def __getitem__(self, idx: int):
         # Label for the image
         label = self.label_mapping[self.data_info.loc[idx, "Estimated Emotion"]]
+        subject = self.data_info.loc[idx, "Subject"]
         
         # Load in the matrix that already been preprocessed
         # Load in the matrix that had already been preprocessed
@@ -165,12 +165,12 @@ class MyDataset(Dataset):
             return "strain"
 
 
-def get_loader(csv_file, preprocess_path,
-               label_mapping, mode, batch_size,
+def get_loader(csv_file, label_mapping, 
+               mode, batch_size, img_root,
                catego, shuffle=True):
     dataset = MyDataset(data_info=csv_file,
                         label_mapping=label_mapping,
-                        preprocess_path=preprocess_path,
+                        img_root=img_root,
                         catego=catego,
                         mode=mode)
     dataloader = DataLoader(dataset=dataset,
