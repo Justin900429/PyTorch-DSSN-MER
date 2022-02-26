@@ -5,9 +5,7 @@ from sklearn.metrics import f1_score
 import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader
-from torchsummary import summary
 from dataloader import (
-    MyDataset,
     get_loader,
     LOSO_sequence_generate
 )
@@ -125,14 +123,14 @@ def LOSO_train(data: pd.DataFrame, sub_column: str, args,
 
         # Create dataset and dataloader
         _, train_loader = get_loader(csv_file=train_csv,
-                                     preprocess_path=args.pre,
                                      label_mapping=label_mapping,
+                                     img_root=args.img_root,
                                      mode=image_mode,
                                      batch_size=args.batch_size,
                                      catego=args.catego)
         _, test_loader = get_loader(csv_file=test_csv,
-                                    preprocess_path=args.pre,
                                     label_mapping=label_mapping,
+                                    img_root=args.img_root,
                                     mode=image_mode,
                                     batch_size=len(test_csv),
                                     catego=args.catego)
@@ -176,14 +174,14 @@ if __name__ == "__main__":
                         type=str,
                         required=True,
                         help="Path for the csv file for training data")
-    parser.add_argument("--pre",
-                        type=str,
-                        required=True,
-                        help="Preprocess path for training")
     parser.add_argument("--catego",
                         type=str,
                         required=True,
                         help="SAMM or CASME dataset")
+    parser.add_argument("--img_root",
+                        type=str,
+                        required=True,
+                        help="Root for the training image")
     parser.add_argument("--num_classes",
                         type=int,
                         default=5,
