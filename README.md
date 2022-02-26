@@ -43,20 +43,16 @@ $ python save_process_weight \
 
 ### Training
 ```
-usage: train.py [-h] --path PATH --pre PRE --catego CATEGO
-                [--num_classes NUM_CLASSES]
-                [--combination_mode COMBINATION_MODE]
-                [--image_mode IMAGE_MODE [IMAGE_MODE ...]]
-                [--batch_size BATCH_SIZE]
-                [--weight_save_path WEIGHT_SAVE_PATH] [--model MODEL]
-                [--freeze_k FREEZE_K] [--epochs EPOCHS]
-                [--learning_rate LEARNING_RATE]
+usage: train.py [-h] --path PATH --catego CATEGO --img_root IMG_ROOT [--num_classes NUM_CLASSES]
+                [--combination_mode COMBINATION_MODE] [--image_mode IMAGE_MODE [IMAGE_MODE ...]]
+                [--batch_size BATCH_SIZE] [--weight_save_path WEIGHT_SAVE_PATH] [--model MODEL]
+                [--epochs EPOCHS] [--learning_rate LEARNING_RATE]
 
 optional arguments:
   -h, --help            show this help message and exit
   --path PATH           Path for the csv file for training data
-  --pre PRE             Preprocess path for training
   --catego CATEGO       SAMM or CASME dataset
+  --img_root IMG_ROOT   Root for the training image
   --num_classes NUM_CLASSES
                         Classes to be trained
   --combination_mode COMBINATION_MODE
@@ -68,7 +64,6 @@ optional arguments:
   --weight_save_path WEIGHT_SAVE_PATH
                         Path for the saving weight
   --model MODEL         Model to used for training
-  --freeze_k FREEZE_K   Layer to freeze in AlexNet
   --epochs EPOCHS       Epochs for training the model
   --learning_rate LEARNING_RATE
                         Learning rate for training the model
@@ -78,7 +73,7 @@ For example:
 ```shell
 $ python train.py \
     --path <path to csv file> \
-    --pre CASME_preprocess \
+    --img_root <place for your dataset> \
     --catego CASME \
     --image_mode F G \
     --weight_save_path CASME_DSSN_weight \
