@@ -104,17 +104,6 @@ The weight was obtained from [YOUSIKI's](https://github.com/YOUSIKI/PyTorch-Alex
 | SSSN  | 0.63M     |
 | DSSN  | 0.972M    |
 
-### Evaluation (LOSO cross validation)
-|  Categories  | Accuracy | F1-Score |          Method           |
-|:------------:|:--------:|:--------:|:-------------------------:|
-| SAMM (DSSN)  |  0.5664  |  0.5933  | "Magnitude + Gray", "Add" |
-| SAMM (SSSN)  |  0.5551  |  0.5647  |          "Gray"           |
-| CASME (DSSN) |  0.6432  |  0.6378  | "Magnitude + Gray", "Add" |
-| CASME (SSSN) |  0.6249  |  0.6289  |          "Gray"           |
-
-> F1-score was computed using **weighted** method
-
-
 ## Citation
 ```bibtex
 @inproceedings{khor2019dual,
