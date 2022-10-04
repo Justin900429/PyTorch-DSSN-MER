@@ -1,7 +1,7 @@
 # README
 
 ## Introduction
-This is the Pytorch Version for the reproduction of [Dual-stream Shallow Networks for Facial Micro-Expression Recognition](https://ieeexplore.ieee.org/document/8802965). [[Head to official code]](https://github.com/IcedDoggie/DSSN-MER)
+This is the Pytorch Version for the reimplementation of [Dual-stream Shallow Networks for Facial Micro-Expression Recognition](https://ieeexplore.ieee.org/document/8802965). [[Head to official code]](https://github.com/IcedDoggie/DSSN-MER)
 
 ## Files
 * **dataloader**: Function for building custom dataset
